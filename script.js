@@ -99,36 +99,41 @@ function drawWheel() {
 
 
 // =========================
-// TẠO 24 BÓNG ĐÈN
+// TẠO BÓNG ĐÈN RESPONSIVE
 // =========================
 
 const numberOfLights = 24;
 
-for (let i = 0; i < numberOfLights; i++) {
+function positionLights() {
+    // Lấy kích thước thực tế của khung vòng quay trên màn hình
+    const size = lights.clientWidth;
+    if (!size) return;
 
-    const light = document.createElement("div");
+    const center = size / 2;
+    const radius = size / 2 - 7;
+    const lightSize = lights.querySelector(".light")?.offsetWidth || 15;
 
-    light.className = "light";
+    for (let i = 0; i < numberOfLights; i++) {
+        let light = lights.children[i];
 
-    const angle = (360 / numberOfLights) * i;
+        if (!light) {
+            light = document.createElement("div");
+            light.className = "light";
+            lights.appendChild(light);
+        }
 
-    const center = 310;
-    const radius = 312;
+        const angle = (360 / numberOfLights) * i - 90;
+        const radians = angle * Math.PI / 180;
+        const x = center + Math.cos(radians) * radius;
+        const y = center + Math.sin(radians) * radius;
 
-    const x =
-        center +
-        Math.cos(angle * Math.PI / 180) * radius;
-
-    const y =
-        center +
-        Math.sin(angle * Math.PI / 180) * radius;
-
-    light.style.left = `${x - 7.5}px`;
-    light.style.top = `${y - 7.5}px`;
-
-    lights.appendChild(light);
+        light.style.left = `${x - lightSize / 2}px`;
+        light.style.top = `${y - lightSize / 2}px`;
+    }
 }
 
+positionLights();
+window.addEventListener("resize", positionLights);
 
 // =========================
 // QUAY MŨI TÊN
@@ -251,3 +256,4 @@ nameInput.addEventListener("keydown", (e) => {
 
 // Vẽ vòng quay trống ban đầu
 drawWheel();
+window.addEventListener("load", positionLights);
